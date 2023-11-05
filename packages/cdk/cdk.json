@@ -17,8 +17,8 @@
     ]
   },
   "context": {
-    "ragEnabled": false,
-    "selfSignUpEnabled": true,
+    "ragEnabled": true,
+    "selfSignUpEnabled": false,
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
     "@aws-cdk/core:checkSecretUsage": true,
     "@aws-cdk/core:target-partitions": [
