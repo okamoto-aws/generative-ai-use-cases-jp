@@ -56,7 +56,7 @@ Generative AI（生成系 AI）は、ビジネスの変革に革新的な可能�
 <details>
   <summary>校正</summary>
 
-  LLM は、文章の誤字脱字だけでなく文章を理解し改善点を指摘することが可能です。自分が書いたレポートを人に見せる前に LLM に自分では気づかなかった点を客観的に指摘してもらいクオリティを上げる効果が期待できます。
+  LLM は、誤字脱字のチェックだけでなく、文章の流れや内容を考慮したより客観的な視点から改善点を提案できます。人に見せる前に LLM に自分では気づかなかった点を客観的にチェックしてもらいクオリティを上げる効果が期待できます。
 
   <img src="/imgs/usecase_editorial.gif"/>
 </details>
@@ -89,7 +89,9 @@ Generative AI（生成系 AI）は、ビジネスの変革に革新的な可能�
 
 **このリポジトリでは、デフォルトでバージニア北部 (us-east-1) リージョンの Anthropic Claude モデルを利用する設定になっています。[Model access 画面](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess) を開き、「Edit」 → 「Anthropic Claude にチェック」 → 「Save changes」 と操作していただいて、バージニア北部リージョンにて Amazon Bedrock (基盤モデル: Claude) を利用できる状態にしてください。Claude Instant を利用する場合など、設定を変える方法については [Amazon Bedrock の違うモデルを利用したい場合](/docs/BEDROCK.md) をご確認ください。**
 
-[AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/)（以降 CDK）を利用してデプロイします。最初に、npm パッケージをインストールしてください。なお、全てのコマンドはルートディレクトリで実行してください。また、[こちらの動画](https://www.youtube.com/watch?v=9sMA17OKP1k)でもデプロイ手順を確認できます。
+アプリケーションは [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/)（以降 CDK）を利用してデプロイします。CDK 環境の準備や、デプロイ手順の説明、セキュリティ機能の追加などを解説している [こちらのドキュメント](https://catalog.workshops.aws/generative-ai-use-cases-jp) で、より詳細な手順を確認できます。また、[こちらの動画](https://www.youtube.com/watch?v=9sMA17OKP1k)では、動画形式でもデプロイ手順を確認できます。
+
+以下にデプロイ手順を記載します。
 
 ```bash
 npm ci
