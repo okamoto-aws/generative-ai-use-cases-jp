@@ -19,6 +19,8 @@
   "context": {
     "ragEnabled": true,
     "selfSignUpEnabled": false,
+    "allowedIpV4AddressRanges": null,
+    "allowedIpV6AddressRanges": null,
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
     "@aws-cdk/core:checkSecretUsage": true,
     "@aws-cdk/core:target-partitions": [

@@ -2,8 +2,16 @@ import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Auth, Api, Web, Database, Rag, Transcribe } from './construct';
 
+interface GenerativeAiUseCasesStackProps extends StackProps {
+  webAclId?: string;
+}
+
 export class GenerativeAiUseCasesStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: GenerativeAiUseCasesStackProps
+  ) {
     super(scope, id, props);
 
     process.env.overrideWarningsEnabled = 'false';
@@ -11,6 +19,12 @@ export class GenerativeAiUseCasesStack extends Stack {
     const ragEnabled: boolean = this.node.tryGetContext('ragEnabled')!;
     const selfSignUpEnabled: boolean =
       this.node.tryGetContext('selfSignUpEnabled')!;
+
+    if (typeof selfSignUpEnabled !== 'boolean') {
+      throw new Error(
+        'cdk.json の selfSignUpEnabled には true か false を設定してください。'
+      );
+    }
 
     const auth = new Auth(this, 'Auth', {
       selfSignUpEnabled,
@@ -30,6 +44,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       predictStreamFunctionArn: api.predictStreamFunction.functionArn,
       ragEnabled,
       selfSignUpEnabled,
+      webAclId: props.webAclId,
     });
 
     if (ragEnabled) {
