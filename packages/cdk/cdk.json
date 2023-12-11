@@ -18,6 +18,7 @@
   },
   "context": {
     "ragEnabled": true,
+    "kendraIndexArn": null,
     "selfSignUpEnabled": false,
     "allowedIpV4AddressRanges": null,
     "allowedIpV6AddressRanges": null,
