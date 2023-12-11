@@ -11,13 +11,17 @@ import {
   PiTranslate,
   PiGlobe,
   PiImages,
+  PiNotebook,
+  PiPen,
 } from 'react-icons/pi';
 import { ReactComponent as AwsIcon } from '../assets/aws.svg';
+import useInterUseCases from '../hooks/useInterUseCases';
 
 const ragEnabled: boolean = import.meta.env.VITE_APP_RAG_ENABLED === 'true';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { setIsShow, setUseCases, setCurrentIndex } = useInterUseCases();
 
   const demoChat = () => {
     navigate('/chat', {
@@ -92,6 +96,163 @@ const LandingPage: React.FC = () => {
     });
   };
 
+  const demoBlog = () => {
+    setIsShow(true);
+    setCurrentIndex(0);
+    setUseCases([
+      {
+        title: '参考情報の取得',
+        description: `URL を指定して、記事の参考となる情報を自動取得します。
+追加コンテキストを設定することで、自分の欲しい情報のみを抽出可能です。`,
+        path: 'web-content',
+        initState: {
+          constValue: [
+            {
+              key: 'url',
+              value: 'https://aws.amazon.com/jp/what-is/generative-ai/',
+            },
+            {
+              key: 'context',
+              value:
+                '生成系AIの概要、仕組みを解説している部分、AWSについて説明している部分のみ抽出してください。',
+            },
+          ],
+        },
+      },
+      {
+        title: '記事の生成',
+        description:
+          '参考情報を元にブログの記事を自動生成します。コンテキストを詳細に設定することで、自分の意図した内容で記事が生成されやすくなります。',
+        path: 'generate',
+        initState: {
+          constValue: [
+            {
+              key: 'context',
+              value: `生成系AIの仕組みの解説とAWSで生成系AIを利用するメリットを解説するブログ記事を生成してください。記事を生成する際は、<rules></rules>を必ず守ってください。
+<rules>
+- 生成系AIおよび、AWS初心者をターゲットにした記事にしてください。
+- IT初心者が分からないような用語は使わないか、分かりやすい言葉に置き換えてください。
+- 生成系AIで何ができるのかがわかる記事にしてください。
+- 文章量が少ないと読者が満足しないので、一般的な情報は補完しながら文量を多くしてください。
+</rules>`,
+            },
+          ],
+          copy: [
+            {
+              from: 'content',
+              to: 'information',
+            },
+          ],
+        },
+      },
+      {
+        title: '記事の校正',
+        description:
+          '自動生成した記事を校正します。LLM の内容について指摘するので、必要に応じて記事を修正してください。',
+        path: 'editorial',
+        initState: {
+          copy: [
+            {
+              from: 'text',
+              to: 'sentence',
+            },
+          ],
+        },
+      },
+      {
+        title: '記事の要約',
+        description:
+          'OGP（記事のリンクをシェアする際に表示される記事のプレビュー）用に、記事を要約します。OGP を適切に設定することで、記事がシェアされた際に記事の概要を正しく伝えることができます。',
+        path: 'summarize',
+        initState: {
+          copy: [
+            {
+              from: 'text',
+              to: 'sentence',
+            },
+          ],
+        },
+      },
+      {
+        title: '記事のサムネイル生成',
+        description:
+          'OGP（記事のリンクをシェアする際に表示される記事のプレビュー）用に、サムネイルを生成します。OGP にキャッチーなサムネイルを設定することで、読者の関心を惹くことができるかもしれません。',
+        path: 'image',
+        initState: {
+          constValue: [
+            {
+              key: 'content',
+              value: `ブログ記事のOGP用にサムネイル画像を生成してください。クラウドやAIの記事であることが一目でわかる画像にしてください。
+ブログ記事の概要は<article></article>に設定されています。
+<article>
+{summarizedSentence}
+</article>`,
+            },
+          ],
+        },
+      },
+    ]);
+  };
+
+  const demoMeetingReport = () => {
+    setIsShow(true);
+    setCurrentIndex(0);
+    setUseCases([
+      {
+        title: '文字起こし',
+        description: `「音声認識」の機能を使って、録音データから会話の内容を文字起こしします。任意の音声ファイルで実行してください。
+音声認識が完了したら、「整形」ボタンを押してください（音声認識結果は自動でコピーされます）。`,
+        path: 'transcribe',
+      },
+      {
+        title: '整形',
+        description:
+          '「文章生成」の機能を使って、文字起こしファイルを整形します。フィラーワードの除去や音声認識が正しくできていない部分などを補正し、人間が理解しやすいようにします。',
+        path: 'generate',
+        initState: {
+          constValue: [
+            {
+              key: 'context',
+              value: `録音データの文字起こし結果が入力されているので、<rules></rules>の通りに整形してください。
+<rules>
+- フィラーワードを除去してください。
+- 文字起こしの誤認識と思われる内容は正しい内容に書き換えてください。
+- 接続詞などが省略されている場合は、読みやすいように保管してください。
+</rules>`,
+            },
+          ],
+          copy: [
+            {
+              from: 'transcript',
+              to: 'information',
+            },
+          ],
+        },
+      },
+      {
+        title: '議事録作成',
+        description:
+          '「文章生成」の機能を使って、議事録を生成します。コンテキストを詳細に指定することで、議事録のフォーマットや記載の粒度を指示できます。',
+        path: 'generate',
+        initState: {
+          constValue: [
+            {
+              key: 'context',
+              value: `会議の発言内容を元にマークダウン形式の議事録を作成してください。
+会議で話したテーマごとに章立てし、議論した内容、決定事項、宿題事項をまとめてください。`,
+            },
+          ],
+          copy: [
+            {
+              from: 'text',
+              to: 'information',
+            },
+          ],
+        },
+      },
+    ]);
+  };
+
   return (
     <div className="pb-24">
       <div className="bg-aws-squid-ink flex flex-col items-center justify-center px-3 py-5 text-xl font-semibold text-white lg:flex-row">
@@ -160,6 +321,18 @@ const LandingPage: React.FC = () => {
           onClickDemo={demoGenerateImage}
           icon={<PiImages />}
           description="画像生成 AI は、テキストや画像を元に新しい画像を生成できます。アイデアを即座に可視化することができ、デザイン作業などの効率化を期待できます。こちらの機能では、プロンプトの作成を LLM に支援してもらうことができます。"
+        />
+        <CardDemo
+          label="ブログ記事作成【ユースケース間連携】"
+          onClickDemo={demoBlog}
+          icon={<PiPen />}
+          description="複数のユースケースを組み合わせて、ブログ記事を生成します。記事の概要とサムネイル画像も自動生成することで、OGP の設定も容易になります。このデモでは、AWS 公式ページの情報を元に生成系 AI を紹介するブログ記事を生成します。"
+        />
+        <CardDemo
+          label="議事録作成【ユースケース間連携】"
+          onClickDemo={demoMeetingReport}
+          icon={<PiNotebook />}
+          description="複数のユースケースを組み合わせて、会議の録音データから議事録を自動作成します。録音データの文字起こし、文字起こし結果の整形、議事録作成を人的コストをかけずに行うことが可能です。"
         />
       </div>
     </div>
