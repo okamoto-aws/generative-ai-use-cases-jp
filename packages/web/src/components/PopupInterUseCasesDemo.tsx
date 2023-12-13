@@ -1,51 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { BaseProps } from '../@types/common';
 import { PiArrowFatRightFill, PiCaretDown, PiX } from 'react-icons/pi';
 import ButtonIcon from './ButtonIcon';
 import useInterUseCases from '../hooks/useInterUseCases';
-import { useNavigate } from 'react-router-dom';
 
 type Props = BaseProps;
 
 const PopupInterUseCasesDemo: React.FC<Props> = () => {
-  const { setIsShow, useCases, currentIndex, setCurrentIndex, copyTemporary } =
-    useInterUseCases();
+  const {
+    setIsShow,
+    title,
+    useCases,
+    currentIndex,
+    setCurrentIndex,
+    navigateUseCase,
+  } = useInterUseCases();
   const [isOpen, setIsOpen] = useState(true);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const uc = useCases[currentIndex];
-    if (uc) {
-      const state: Record<string, string> = {};
-
-      uc.initState?.copy?.forEach(({ from, to }) => {
-        state[to] = copyTemporary[from];
-      });
-      uc.initState?.constValue?.forEach(({ key, value }) => {
-        let replacedValue = value;
-
-        // 置換対象がある場合は置換を実施
-        const matches = value.match(/\{(.+?)\}/g);
-        matches?.forEach((m) => {
-          replacedValue = replacedValue.replace(
-            m,
-            copyTemporary[m.replace(/({|})/g, '')]
-          );
-        });
-
-        state[key] = replacedValue;
-      });
-
-      navigate(uc.path, {
-        state,
-        replace: true,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex]);
 
   return (
-    <div className="fixed top-0 z-50 w-full  p-3 lg:left-1/3 lg:w-1/2">
+    <div className="fixed top-0 z-50 ml-10  w-11/12 pt-1 lg:left-1/3 lg:w-1/2 lg:p-3">
       <div className="border-aws-squid-ink/50 relative rounded border bg-white p-3 shadow-lg">
         <div className="flex w-full">
           <div
@@ -56,7 +29,7 @@ const PopupInterUseCasesDemo: React.FC<Props> = () => {
             <PiCaretDown
               className={`transition ${!isOpen && 'rotate-180'} mr-2`}
             />
-            議事録作成【ユースケース間連携デモ】
+            {title}
           </div>
           <ButtonIcon
             className={`right-1 top-1 -m-1 `}
@@ -90,6 +63,7 @@ const PopupInterUseCasesDemo: React.FC<Props> = () => {
                     return;
                   }
                   setCurrentIndex(idx);
+                  navigateUseCase(idx);
                 }}>
                 <div>{usecase.title}</div>
                 <PiArrowFatRightFill

@@ -1,27 +1,14 @@
 import { produce } from 'immer';
+import { useNavigate } from 'react-router-dom';
 import { create } from 'zustand';
-
-type InterUseCases = {
-  title: string;
-  description: string;
-  path: string;
-  initState?: {
-    constValue?: {
-      key: string;
-      value: string;
-    }[];
-    copy?: {
-      from: string;
-      to: string;
-    }[];
-  };
-};
+import { InterUseCase } from '../@types/navigate';
 
 const useInterUseCasesState = create<{
   isShow: boolean;
   setIsShow: (b: boolean) => void;
-  useCases: InterUseCases[];
-  setUseCases: (usecases: InterUseCases[]) => void;
+  title: string;
+  useCases: InterUseCase[];
+  setUseCases: (title: string, usecases: InterUseCase[]) => void;
   currentIndex: number;
   setCurrentIndex: (n: number) => void;
   copyTemporary: {
@@ -36,9 +23,11 @@ const useInterUseCasesState = create<{
         isShow: b,
       }));
     },
+    title: '',
     useCases: [],
-    setUseCases: (useCases) => {
+    setUseCases: (title, useCases) => {
       set(() => ({
+        title,
         useCases,
       }));
     },
@@ -61,9 +50,11 @@ const useInterUseCasesState = create<{
 });
 
 const useInterUseCases = () => {
+  const navigate = useNavigate();
   const {
     isShow,
     setIsShow,
+    title,
     useCases,
     setUseCases,
     currentIndex,
@@ -72,15 +63,48 @@ const useInterUseCases = () => {
     setCopyTemporary,
   } = useInterUseCasesState();
 
+  const navigateUseCase_ = (usecase: InterUseCase) => {
+    const state: Record<string, string> = {};
+
+    Object.entries(usecase.state ?? {}).forEach(([key, { value }]) => {
+      let replacedValue = value;
+
+      // 遷移元の画面項目の値を埋め込む処理
+      // value 内の{}で囲われたキー名を取得し、copyTemporary から当該のキー名の値を取得して、置換する
+      // 例) {context} が設定されている場合は、copyTemporary から context の値を取得し、{context} をその値で置換する。
+      const matches = value.match(/\{(.+?)\}/g);
+      matches?.forEach((m) => {
+        replacedValue = replacedValue.replace(
+          m,
+          copyTemporary[m.replace(/({|})/g, '')]
+        );
+      });
+
+      state[key] = replacedValue;
+    });
+
+    navigate(usecase.path, {
+      state,
+    });
+  };
+
   return {
     isShow,
     setIsShow,
+    title,
     useCases,
     setUseCases,
     currentIndex,
     setCurrentIndex,
-    copyTemporary,
     setCopyTemporary,
+    navigateUseCase: (idx: number) => {
+      navigateUseCase_(useCases[idx]);
+    },
+    init: (title: string, usecasesList: InterUseCase[]) => {
+      setCurrentIndex(0);
+      setUseCases(title, usecasesList);
+      navigateUseCase_(usecasesList[0]);
+    },
   };
 };
 

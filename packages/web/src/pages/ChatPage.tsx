@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { Location, useLocation, useParams } from 'react-router-dom';
 import InputChatContent from '../components/InputChatContent';
 import useChat from '../hooks/useChat';
 import useConversation from '../hooks/useConversation';
@@ -8,6 +8,7 @@ import PromptList from '../components/PromptList';
 import useScroll from '../hooks/useScroll';
 import { create } from 'zustand';
 import { ReactComponent as BedrockIcon } from '../assets/bedrock.svg';
+import { ChatPageLocationState } from '../@types/navigate';
 
 type StateType = {
   content: string;
@@ -27,7 +28,7 @@ const useChatPageState = create<StateType>((set) => {
 
 const ChatPage: React.FC = () => {
   const { content, setContent } = useChatPageState();
-  const { state, pathname } = useLocation();
+  const { state, pathname } = useLocation() as Location<ChatPageLocationState>;
   const { chatId } = useParams();
 
   const {
@@ -91,7 +92,7 @@ const ChatPage: React.FC = () => {
 
   return (
     <>
-      <div className={`${!isEmpty ? 'screen:pb-36' : ''}`}>
+      <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold print:visible print:my-5 print:h-min lg:visible lg:my-5 lg:h-min">
           {title}
         </div>
@@ -139,19 +140,19 @@ const ChatPage: React.FC = () => {
               <div className="w-full border-b border-gray-300"></div>
             </div>
           ))}
-      </div>
 
-      <div className="absolute bottom-0 z-0 flex w-full items-end justify-center print:hidden">
-        <InputChatContent
-          content={content}
-          disabled={loading}
-          onChangeContent={setContent}
-          resetDisabled={!!chatId}
-          onSend={() => {
-            onSend();
-          }}
-          onReset={onReset}
-        />
+        <div className="fixed bottom-0 z-0 flex w-full items-end justify-center print:hidden lg:pr-64">
+          <InputChatContent
+            content={content}
+            disabled={loading}
+            onChangeContent={setContent}
+            resetDisabled={!!chatId}
+            onSend={() => {
+              onSend();
+            }}
+            onReset={onReset}
+          />
+        </div>
       </div>
 
       {isEmpty && <PromptList />}
