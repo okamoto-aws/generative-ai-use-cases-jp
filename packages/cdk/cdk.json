@@ -19,8 +19,13 @@
   "context": {
     "ragEnabled": true,
     "kendraIndexArn": null,
+<<<<<<< HEAD
     "selfSignUpEnabled": false,
     "allowedSignUpEmailDomains": null, 
+=======
+    "selfSignUpEnabled": true,
+    "allowedSignUpEmailDomains": null,
+>>>>>>> main
     "modelRegion": "us-east-1",
     "modelIds": ["anthropic.claude-v2","anthropic.claude-v2:1","anthropic.claude-instant-v1"],
     "imageGenerationModelIds": ["stability.stable-diffusion-xl-v0","amazon.titan-image-generator-v1"],
