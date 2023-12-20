@@ -26,9 +26,8 @@ export class GenerativeAiUseCasesStack extends Stack {
     const ragEnabled: boolean = this.node.tryGetContext('ragEnabled')!;
     const selfSignUpEnabled: boolean =
       this.node.tryGetContext('selfSignUpEnabled')!;
-    const allowedSignUpEmailDomains: string[] | null | undefined = this.node.tryGetContext(
-      'allowedSignUpEmailDomains'
-    );
+    const allowedSignUpEmailDomains: string[] | null | undefined =
+      this.node.tryGetContext('allowedSignUpEmailDomains');
 
     if (typeof ragEnabled !== 'boolean') {
       throw new Error(errorMessageForBooleanContext('ragEnabled'));
@@ -58,6 +57,10 @@ export class GenerativeAiUseCasesStack extends Stack {
       ragEnabled,
       selfSignUpEnabled,
       webAclId: props.webAclId,
+      modelRegion: api.modelRegion,
+      modelIds: api.modelIds,
+      imageGenerationModelIds: api.imageGenerationModelIds,
+      endpointNames: api.endpointNames,
     });
 
     if (ragEnabled) {
@@ -103,6 +106,22 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     new CfnOutput(this, 'SelfSignUpEnabled', {
       value: selfSignUpEnabled.toString(),
+    });
+
+    new CfnOutput(this, 'ModelRegion', {
+      value: api.modelRegion,
+    });
+
+    new CfnOutput(this, 'ModelIds', {
+      value: JSON.stringify(api.modelIds),
+    });
+
+    new CfnOutput(this, 'ImageGenerateModelIds', {
+      value: JSON.stringify(api.imageGenerationModelIds),
+    });
+
+    new CfnOutput(this, 'EndpointNames', {
+      value: JSON.stringify(api.endpointNames),
     });
   }
 }
