@@ -19,6 +19,7 @@
   "context": {
     "ragEnabled": true,
     "kendraIndexArn": null,
+    "kendraDataSourceBucketName": null,
     "selfSignUpEnabled": false,
     "allowedSignUpEmailDomains": null, 
     "modelRegion": "us-east-1",
@@ -29,6 +30,7 @@
     "allowedIpV6AddressRanges": null,
     "allowedCountryCodes": null,
     "dashboard": false,
+    "anonymousUsageTracking": true,
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
     "@aws-cdk/core:checkSecretUsage": true,
     "@aws-cdk/core:target-partitions": [
