@@ -26,6 +26,11 @@
     "modelIds": ["anthropic.claude-instant-v1","anthropic.claude-v2","anthropic.claude-v2:1"],
     "imageGenerationModelIds": ["stability.stable-diffusion-xl-v1","stability.stable-diffusion-xl-v0","amazon.titan-image-generator-v1"],
     "endpointNames": [],
+    "agentEnabled": false,
+    "agentRegion": "us-east-1",
+    "searchApiKey": "",
+    "agents": [
+    ],
     "allowedIpV4AddressRanges": null,
     "allowedIpV6AddressRanges": null,
     "allowedCountryCodes": null,
