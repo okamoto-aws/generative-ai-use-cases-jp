@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { Location, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import InputChatContent from '../components/InputChatContent';
 import useChat from '../hooks/useChat';
 import useConversation from '../hooks/useConversation';
 import ChatMessage from '../components/ChatMessage';
+import Select from '../components/Select';
 import useScroll from '../hooks/useScroll';
 import { create } from 'zustand';
 import { ReactComponent as BedrockIcon } from '../assets/bedrock.svg';
-import { ChatPageLocationState } from '../@types/navigate';
-import { SelectField } from '@aws-amplify/ui-react';
+import { AgentPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import { v4 as uuidv4 } from 'uuid';
+import queryString from 'query-string';
 
 type StateType = {
   modelId: string;
@@ -47,7 +48,7 @@ const useChatPageState = create<StateType>((set) => {
 const AgentChatPage: React.FC = () => {
   const { modelId, sessionId, content, setModelId, setContent } =
     useChatPageState();
-  const { state, pathname } = useLocation() as Location<ChatPageLocationState>;
+  const { pathname, search } = useLocation();
   const { chatId } = useParams();
 
   const { loading, loadingMessages, isEmpty, messages, clear, postChat } =
@@ -65,16 +66,19 @@ const AgentChatPage: React.FC = () => {
   }, [chatId, getConversationTitle]);
 
   useEffect(() => {
-    if (state !== null) {
-      setContent(state.content);
+    const _modelId = !modelId ? availableModels[0] : modelId;
+    if (search !== '') {
+      const params = queryString.parse(search) as AgentPageQueryParams;
+      setContent(params.content ?? '');
+      setModelId(
+        availableModels.includes(params.modelId ?? '')
+          ? params.modelId!
+          : _modelId
+      );
+    } else {
+      setModelId(_modelId);
     }
-  }, [state, setContent]);
-
-  useEffect(() => {
-    if (!modelId) {
-      setModelId(availableModels[0]);
-    }
-  }, [modelId, availableModels, setModelId]);
+  }, [setContent, modelId, availableModels, search, setModelId]);
 
   const onSend = useCallback(() => {
     const model = agentModels.find((m) => m.modelId === modelId);
@@ -108,22 +112,18 @@ const AgentChatPage: React.FC = () => {
   return (
     <>
       <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
-        <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold print:visible print:my-5 print:h-min lg:visible lg:my-5 lg:h-min">
+        <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
           {title}
         </div>
 
         <div className="mb-6 mt-2 flex w-full items-end justify-center lg:mt-0">
-          <SelectField
-            label="モデル"
-            labelHidden
+          <Select
             value={modelId}
-            onChange={(e) => setModelId(e.target.value)}>
-            {availableModels.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </SelectField>
+            onChange={setModelId}
+            options={availableModels.map((m) => {
+              return { value: m, label: m };
+            })}
+          />
         </div>
 
         {((isEmpty && !loadingMessages) || loadingMessages) && (
@@ -150,7 +150,7 @@ const AgentChatPage: React.FC = () => {
             </div>
           ))}
 
-        <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center print:hidden lg:pr-64">
+        <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden">
           <InputChatContent
             content={content}
             disabled={loading}
