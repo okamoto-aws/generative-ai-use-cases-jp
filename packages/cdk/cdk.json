@@ -33,11 +33,17 @@
     "agentRegion": "us-east-1",
     "searchAgentEnabled": true,
     "searchApiKey": "",
-    "agents": [],
+    "agents": [{
+      "displayName": "WebSearch",
+      "agentId": "XQBVN8EBMN",
+      "aliasId": "XEZAJAGPNN"
+    }
+
+    ],
     "allowedIpV4AddressRanges": null,
     "allowedIpV6AddressRanges": null,
     "allowedCountryCodes": null,
-    "dashboard": false,
+    "dashboard": true,
     "anonymousUsageTracking": true,
     "recognizeFileEnabled": false,
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
